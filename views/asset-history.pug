@@ -1,0 +1,39 @@
+extends layout
+
+block content
+  p.mb-2
+    a(href="/assets/ui") ← Back to assets
+
+  h1.mb-3
+    | History · 
+    if asset
+      span.text-muted= asset.name
+    else
+      span.text-muted Unknown asset
+
+  if !asset
+    .alert.alert-warning Asset not found.
+  else
+    p
+      strong Serial: 
+      = asset.serialNumber
+      |  
+      strong Status: 
+      = asset.status
+
+    h4.mb-2 Log entries
+    if logs && logs.length
+      table.table.table-bordered.table-sm
+        thead
+          tr
+            th ID
+            th Employee ID
+            th Action
+        tbody
+          each log in logs
+            tr
+              td= log.id
+              td= log.employeeId != null ? log.employeeId : '—'
+              td= log.action
+    else
+      p.text-muted No log entries yet.

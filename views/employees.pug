@@ -1,0 +1,38 @@
+extends layout
+
+block content
+  h1.mb-3 Employees
+
+  if notice
+    .alert.alert-success(role="alert")= notice
+  if error
+    .alert.alert-danger(role="alert")= error
+
+  .card.mb-4
+    .card-body
+      h2.h5.card-title Add employee
+      form(action="/employees/add", method="post")
+        input(type="hidden", name="_from", value="web")
+        .row.g-2
+          .col-md-4
+            label.form-label(for="empName") Name
+            input#empName.form-control(type="text", name="name", required)
+          .col-md-4
+            label.form-label(for="empEmail") Email
+            input#empEmail.form-control(type="email", name="email", required)
+          .col-md-4.d-flex.align-items-end
+            button.btn.btn-primary(type="submit") Add employee
+
+  h2.h5.mb-2 Employee list
+  table.table.table-bordered.table-striped
+    thead
+      tr
+        th ID
+        th Name
+        th Email
+    tbody
+      each emp in employees
+        tr
+          td= emp.id
+          td= emp.name
+          td= emp.email

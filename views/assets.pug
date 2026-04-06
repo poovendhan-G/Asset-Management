@@ -1,0 +1,79 @@
+extends layout
+
+block content
+  h1.mb-3 Asset management
+
+  if notice
+    .alert.alert-success(role="alert")= notice
+  if error
+    .alert.alert-danger(role="alert")= error
+
+  .row
+    .col-lg-6.mb-4
+      h3 Add asset
+      form(action="/assets/add", method="post")
+        input(type="hidden", name="_from", value="web")
+        .mb-2
+          label.form-label(for="name") Name
+          input#name.form-control(type="text", name="name", required)
+        .mb-2
+          label.form-label(for="serialNumber") Serial number
+          input#serialNumber.form-control(type="text", name="serialNumber")
+        .mb-2
+          label.form-label(for="status") Status
+          select#status.form-select(name="status")
+            option(value="available", selected) available
+            option(value="issued") issued
+        button.btn.btn-primary(type="submit") Add asset
+
+    .col-lg-6.mb-4
+      h3 Issue asset
+      form(action="/assets/issue", method="post")
+        input(type="hidden", name="_from", value="web")
+        .mb-2
+          label.form-label(for="issueAssetId") Asset
+          select#issueAssetId.form-select(name="assetId", required)
+            option(value="") — Select —
+            each a in assets
+              if a.status === 'available'
+                option(value=a.id)= a.name + ' (' + a.serialNumber + ')'
+        .mb-2
+          label.form-label(for="employeeId") Employee
+          select#employeeId.form-select(name="employeeId", required)
+            option(value="") — Select —
+            each e in employees
+              option(value=e.id)= e.name + ' · ' + e.email
+        button.btn.btn-primary(type="submit") Issue
+
+    .col-lg-6.mb-4
+      h3 Return asset
+      form(action="/assets/return", method="post")
+        input(type="hidden", name="_from", value="web")
+        .mb-2
+          label.form-label(for="returnAssetId") Asset
+          select#returnAssetId.form-select(name="assetId", required)
+            option(value="") — Select —
+            each a in assets
+              if a.status === 'issued'
+                option(value=a.id)= a.name + ' (' + a.serialNumber + ')'
+        button.btn.btn-warning(type="submit") Return
+
+  h3.mb-2 All assets
+  table.table.table-bordered.table-striped
+    thead
+      tr
+        th ID
+        th Name
+        th Serial
+        th Status
+        th History
+    tbody
+      each a in assets
+        tr
+          td= a.id
+          td= a.name
+          td= a.serialNumber
+          td
+            span.badge(class=a.status === 'issued' ? 'bg-warning text-dark' : 'bg-success')= a.status
+          td
+            a.btn.btn-sm.btn-outline-secondary(href="/assets/history/" + a.id + "/page") View log
